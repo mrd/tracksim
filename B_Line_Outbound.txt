@@ -1,0 +1,54 @@
+# Distance from previous stop in meters
+# Speed limits in meters per second
+#   25 mph = 11.176 mps
+#   10 mph = 4.47 mps
+#   3  mph = 1.34 mps
+#
+0     LI 4.47
+0     ST Blandford St
+254   CR Granby St
+114   ST BU East
+0     CR Cummington St
+0     LI 11.176
+131.5 CR St Mary St
+105   ST BU Central
+131   CR Carlton St
+129   CR BU Bridge
+251.7 ST BU West
+0     CR BU West Ped
+154.3 CR St Paul St
+91.7  ST St Paul St
+120.5 CR Pleasant St
+108.2 ST Pleasant St
+138.4 CR Babcock St
+91.1  ST Babcock St
+179.6 CR Brighton Ave
+132.4 ST Brighton Ave
+365   CR 1 1 1 Linden St Stop Sign
+97.2  ST Harvard St
+0     CR Harvard St
+343.8 ST Griggs St
+280.7 ST Allston St
+0     CR Allston St
+233.7 ST Warren St
+0     CR Warren St
+322   CR Summit Ave
+265.1 ST Washington St
+0     CR Washington St
+214.9 CR 1 1 1 Mt Hood Rd Stop Sign
+138.2 CR Colborne Rd
+85.5  ST Sutherland Rd
+306.4 CR Wallingford Rd
+103.7 ST Chiswick Rd
+0     CR Chiswick Rd
+190   CR Strathmore Rd
+113.1 ST Chestnut Hill Ave
+0     LI 1.34
+0     CR Chestnut Hill Ave
+64    LI 11.176
+88.3  TP Chestnut Hill Dr Yield Sign
+256.7 ST South St
+0     CR South St
+695.8 CR Lake St
+105   ST Boston College
+# Total length approx 6.4km
