@@ -44,9 +44,11 @@ instance Vehicle CarTrack where
   vehicleMaxSpeed = ctSpeedLimit
 
 -- | Associate a car with a track.
+trackCar :: Car -> CarTrack
 trackCar c = CT { ctCar = c, ctSpeedLimit = carMaxSpeed c }
 
 -- | Compute average waiting time at a crossing.
+avgCRdelay :: TP -> Double
 avgCRdelay (CR _ cyc grn _) = (cyc - grn)**2 / (2 * cyc)
 avgCRdelay _                = 0
 
@@ -54,6 +56,8 @@ avgCRdelay _                = 0
 -- between each track point and moving directly there.  It uses some
 -- simple approximations to compute delay time at each crossing or
 -- station.
+bigStep :: (CarTrack, Double, Double, Track)
+           -> (CarTrack, Double, Double, Track)
 bigStep (ct, x, t, [])     = (ct, x, t, [])
 bigStep (ct, x, t, (tr, nextX):trs) = (ct', x', t'', trs)
   where
@@ -63,12 +67,14 @@ bigStep (ct, x, t, (tr, nextX):trs) = (ct', x', t'', trs)
 
 -- | bigStepSim performs its simulation by big-stepping from track
 -- point to track point.
+bigStepSim :: Car -> Track -> [(CarTrack, Double, Double, Track)]
 bigStepSim c tr = steps1 ++ [head steps2]
   where
     steps            = iterate bigStep (trackCar c, 0, 0, tr)
     (steps1, steps2) = break (\ (_, _, _, tr) -> null tr) steps
 
 -- | Show an approximate time duration in human-friendly format.
+timeString :: (RealFrac a) => a -> String
 timeString t = show min ++ " minute" ++ pluralmin ++ " " ++ show sec ++ " second" ++ pluralsec
   where
     min       = round t `div` 60
@@ -82,6 +88,7 @@ crDefaultCyc = 90
 crDefaultGrn = 30
 
 -- | Parse and interpret the values in a track file, producing a Track upon success.
+readTrackFile :: SourceName -> IO (Either ParseError Track)
 readTrackFile f = do
   e_es <- parseTrackFile f
   case e_es of
@@ -160,6 +167,7 @@ approxEQ e x y = not (approxLT e x y) && not (approxGT e x y)
 
 -- | Precision of approximation is determined by the time unit, in
 -- this case I have chosen to make it the reciprocal of unit.
+unitEpsilon :: (Fractional t) => t -> t
 unitEpsilon unit = 1 / unit
 
 -- | Uses "simple" approximation by adding 12 random variables [0,1]
@@ -173,6 +181,7 @@ normalX avg stddev rng = (x, snd (last ls))
 -- | Figure out waiting time (in seconds) until safe to cross.  For now
 -- assume the "green" portion of the cycle comes at the beginning.
 -- Expects t in seconds.
+nextCrossing :: Double -> TP -> Double
 nextCrossing t' (CR _ cyc' grn' stop)
   | t `mod` cyc < grn = if stop then 1 else 0
   | otherwise         = fromIntegral $ cyc - (t `mod` cyc)
@@ -246,6 +255,7 @@ flr = fromIntegral . floor
 
 -- | Create an initial state from random-number generator, number of
 -- ticks per second, a vehicle, and a track.
+mkState :: StdGen -> Double -> CarTrack -> Track -> SimState
 mkState rng unit veh tr =
   St { simPosition   = 0
      , simSpeed      = 0
@@ -261,12 +271,14 @@ mkState rng unit veh tr =
 
 -- | Convenience function which gets the random-number generator from
 -- the system.
+mkStateIO :: Double -> CarTrack -> Track -> IO SimState
 mkStateIO unit veh tr = do
   rng <- newStdGen
   return $ mkState rng unit veh tr
 
 -- | Runs the simulation until track is exhausted and produces the
 -- final state.
+runSim :: SimState -> SimM () -> SimState
 runSim st0 f
   | null (simTrack st0) = st0
   | otherwise = runSim (execState f st0) f

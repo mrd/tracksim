@@ -1,4 +1,4 @@
-module Parser (TrackFile (..), parseTrackFile) where
+module Parser (TrackFile (..), parseTrackFile, SourceName, ParseError) where
 import Control.Monad
 import ApplicativeParsec
 import Data.List (intersperse)
