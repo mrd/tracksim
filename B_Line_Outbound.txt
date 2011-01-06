@@ -6,23 +6,24 @@
 #
 0     LI 4.47
 0     ST Blandford St
-254   CR Granby St
+0     CR 110 80 0 Blandford St
+254   CR 95 65 0 Granby St
 114   ST BU East
-0     CR Cummington St
+0     CR 90 65 0 Cummington St
 0     LI 11.176
-131.5 CR St Mary St
+131.5 CR 90 60 0 St Mary St
 105   ST BU Central
-131   CR Carlton St
-129   CR BU Bridge
+131   CR 85 50 0 Carlton St
+129   CR 90 25 0 BU Bridge
 251.7 ST BU West
-0     CR BU West Ped
-154.3 CR St Paul St
+0     CR 55 45 0 BU West Ped
+154.3 CR 90 35 0 St Paul St
 91.7  ST St Paul St
-120.5 CR Pleasant St
+120.5 CR 90 40 0 Pleasant St
 108.2 ST Pleasant St
-138.4 CR Babcock St
+138.4 CR 85 35 0 Babcock St
 91.1  ST Babcock St
-179.6 CR Brighton Ave
+179.6 CR 95 25 0 Brighton Ave
 132.4 ST Brighton Ave
 365   CR 1 1 1 Linden St Stop Sign
 97.2  ST Harvard St
