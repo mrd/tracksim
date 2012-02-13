@@ -8,6 +8,7 @@ import Control.Monad (MonadPlus(..), ap)
 -- Hide a few names that are provided by Applicative.
 import Text.ParserCombinators.Parsec hiding (many, optional, (<|>))
 
+{-
 -- The Applicative instance for every Monad looks like this.
 instance Applicative (GenParser s a) where
   pure  = return
@@ -17,3 +18,4 @@ instance Applicative (GenParser s a) where
 instance Alternative (GenParser s a) where
   empty = mzero
   (<|>) = mplus
+-}
