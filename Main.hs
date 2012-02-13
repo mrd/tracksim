@@ -1,4 +1,5 @@
 import TrackSim
+import Text.Printf
 import Control.Monad
 import Data.List
 import System.Environment
@@ -11,7 +12,9 @@ data Options =
           , optLength
           , optUnit    :: Double
           , optTrkFile :: Maybe FilePath
-          , optCarName :: String }
+          , optCarName :: String
+          , optCount   :: Int
+          , optQuiet   :: Bool }
   deriving Show
 
 defaultOptions =
@@ -21,7 +24,9 @@ defaultOptions =
           , optLength   = 22
           , optUnit     = 100
           , optTrkFile  = Nothing
-          , optCarName  = "Type 7" }
+          , optCarName  = "Type 7"
+          , optCount    = 1
+          , optQuiet    = False }
 
 options :: [OptDescr (Options -> Options)]
 options =
@@ -36,7 +41,11 @@ options =
   , Option ['L'] ["length"]
     (ReqArg (\ d opts -> opts { optLength = read d }) "m") "vehicle length"
   , Option ['N'] ["name"]
-    (ReqArg (\ d opts -> opts { optCarName = d }) "name") "vehicle name" ]
+    (ReqArg (\ d opts -> opts { optCarName = d }) "name") "vehicle name"
+  , Option ['n'] ["count"]
+    (ReqArg (\ d opts -> opts { optCount = read d }) "number") "number of times to run"
+  , Option ['q'] ["quiet"]
+    (NoArg (\ opts -> opts { optQuiet = True })) "quiet mode" ]
 
 parseOpts :: [String] -> IO (Options, [String])
 parseOpts argv =
@@ -48,16 +57,23 @@ parseOpts argv =
 main = do
   (opts, _) <- parseOpts =<< getArgs
   let Just f = optTrkFile opts
+  let unit = optUnit opts
   let car = Car (optCarName opts) (optMaxSpd opts) (optAccel opts) (optDecel opts) (optLength opts)
-  st <- (flip runSim step) `fmap` mkSimState (optUnit opts) car f
-  let unit = simTickUnit st
-  forM_ (sort (simLog st)) $ \ e ->
-    putStrLn (timeString (simEvtTime e / unit) ++ ": " ++ simEvtName e ++ ": " ++
-        case simEvtTP e of
-          CR {} -> tpName (simEvtTP e) ++ " crossing"
-          ST {} -> tpName (simEvtTP e) ++ " station"
-          LI li -> show li
-      )
+  st <- replicateM (optCount opts) ((flip runSim step) `fmap` mkSimState unit car f)
+
+  case optCount opts of
+    1 -> forM_ (sort (simLog (head st))) $ \ e ->
+            putStrLn (timeString (simEvtTime e / unit) ++ ": " ++ simEvtName e ++ ": " ++
+                case simEvtTP e of
+                  CR {} -> tpName (simEvtTP e) ++ " crossing"
+                  ST {} -> tpName (simEvtTP e) ++ " station"
+                  LI li -> show li)
+    n -> do ts <- forM (map (last . sort . simLog) st) $ \ e -> do
+                    unless (optQuiet opts) $
+                      printf "%f (%s)\n" (simEvtTime e / unit) (timeString (simEvtTime e / unit))
+                    return (simEvtTime e / unit)
+            let avg = (sum ts / fromIntegral (length ts))
+            printf "Average: %f (%s)\n" avg (timeString avg)
 
 mkSimState u c f = do
   e_tr <- readTrackFile f
