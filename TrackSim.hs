@@ -306,7 +306,7 @@ test = do
       )
 
 testCar :: Car
-testCar = Car "Type 7" (mph2mps 60) 2.68 (-0.981) 6
+testCar = Car "Type 7" (mph2mps 30) (mph2mps 2.8) (mph2mps (-3.5)) 22
 
 testTrack :: Track
 testTrack = [(LI (mph2mps 25), 0), (TP "Start" 0, 0), (ST "St1" 30 5, 20), (CR "Cr1" 90 45 False, 21)]
